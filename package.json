@@ -52,8 +52,5 @@
   "homepage": "https://github.com/Yuanqs-pine/DSH-Transparent-Frosted#readme",
   "bugs": {
     "url": "https://github.com/Yuanqs-pine/DSH-Transparent-Frosted/issues"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

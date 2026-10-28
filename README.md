@@ -1,4 +1,4 @@
-# DSH-Transparent-frosted · 透明磨砂主题
+# DSH-Transparent-Frosted · 透明磨砂主题
 
 <p>
   <img alt="version" src="https://img.shields.io/badge/version-1.0.1-6c8cff">
@@ -52,14 +52,58 @@ A transparent frosted-glass background for DeepSeek Harness. One slider takes th
 
 ## 安装 · Install
 
+四种方式任选其一。装完重启应用，然后打开 **设置 → 透明磨砂主题**，标题旁会显示版本号（当前 `v1.0.1`）。
+
+### ① 插件管理器（推荐，图形界面）
+
+打开 **设置 → 内置插件**（或插件市场）→ 选择本地插件 / 输入目录或包名 → 安装 → 重启。
+
+### ② dsh CLI，从 GitHub 安装
+
 ```bash
-# 从本地目录安装（开发）
-dsh plugin --profile <profile> add link:E:/AI-1/deepseek_space/DSH-Transparent-frosted
+dsh plugin --profile desktop add github:<your-account>/DSH-Transparent-Frosted
 ```
 
-或在 **设置 → 内置插件 / 插件市场** 中安装后重启应用。安装完成后打开：
+### ③ dsh CLI，从 npm 安装
 
-**设置 → 透明磨砂主题**，标题旁会显示当前版本号（`v1.0.0`）便于确认已加载。
+```bash
+dsh plugin --profile desktop add dsh-transparent-frosted
+```
+
+### ④ 本地目录（开发调试）
+
+```bash
+git clone https://github.com/<your-account>/DSH-Transparent-Frosted.git
+dsh plugin --profile desktop add link:/absolute/path/to/DSH-Transparent-Frosted
+```
+
+> Windows 上路径写成 `link:E:/path/to/DSH-Transparent-Frosted` 即可。
+> 桌面端修改插件代码后需要**完全退出并重新启动**应用（客户端模块只在窗口创建时加载）；只刷新页面不会重新挂载。
+
+### 卸载
+
+```bash
+dsh plugin --profile desktop remove dsh-transparent-frosted
+```
+
+或在插件管理里禁用后重启。
+
+---
+
+## 发布到 npm（维护者）
+
+包名在 npm 上必须**全小写**，所以发布名是 `dsh-transparent-frosted`，而展示名 / 仓库名保持 `DSH-Transparent-Frosted`。
+
+```bash
+npm login                       # 一次性
+npm pack --dry-run              # 先看清会发布哪些文件（client.js / index.js / locale / icon / docs …）
+npm publish --access public     # 版本号取自 package.json
+```
+
+`package.json` 里已准备好 `files`、`license`、`keywords`、`repository`、`homepage`、`bugs`、`publishConfig.access`；
+发布前把 `repository` / `homepage` / `bugs` 里的 `<your-account>` 换成你的 GitHub 用户名。
+
+发布后用户即可 `dsh plugin add dsh-transparent-frosted`，或直接 `npm i dsh-transparent-frosted` 查看包内容。
 
 ---
 
@@ -107,7 +151,7 @@ document.querySelectorAll('[data-dtg-page]').length     // 已摊平的页面容
 ## 目录 · Layout
 
 ```
-DSH-Transparent-frosted/
+DSH-Transparent-Frosted/
 ├── package.json          # dsh 插件清单（bundle patch + client 入口）
 ├── cordis.patch.yml      # 把插件插入 dsh 组合
 ├── index.js              # 宿主侧入口（无需注册任何能力）
@@ -132,7 +176,7 @@ DSH-Transparent-frosted/
 ## 卸载 · Uninstall
 
 ```bash
-dsh plugin --profile <profile> remove @local/dsh-transparent-frosted
+dsh plugin --profile desktop remove dsh-transparent-frosted
 ```
 
 或在插件管理里禁用后重启。卸载会清理注入的 `<style>`、`data-dtg-*` 属性、`--dtg-*` 变量、`body` 上的表面色覆盖、所有运行时标记与监听器。

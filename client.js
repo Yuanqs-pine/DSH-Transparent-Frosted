@@ -1,4 +1,4 @@
-/* Transparent Frosted Theme 透明磨砂主题 — client module.
+/* DSH-Transparent-Frosted 透明磨砂主题 — client module.
  *
  * A master switch plus two mutually exclusive modes, both painted strictly on
  * the background layer:
@@ -16,7 +16,7 @@
  */
 
 window.__ModuleLoader__.load({
-  id: '@local/dsh-transparent-frosted',
+  id: 'dsh-transparent-frosted',
   factory(require) {
     const React = require('react')
     const h = React.createElement
@@ -613,6 +613,49 @@ window.__ModuleLoader__.load({
       let width = 0
       let height = 0
 
+      /* pointer state in world units: hover repels, dragging carries particles */
+      const pointer = { x: 0, y: 0, lastX: 0, lastY: 0, vx: 0, vy: 0, active: false, down: false }
+
+      const toWorld = (clientX, clientY) => {
+        const rect = holder.getBoundingClientRect()
+        if (!rect.width || !rect.height) return null
+        return {
+          x: (clientX - rect.left - rect.width / 2) / scale,
+          y: (rect.top + rect.height / 2 - clientY) / scale,
+        }
+      }
+
+      const onPointerMove = (event) => {
+        const world = toWorld(event.clientX, event.clientY)
+        if (!world) return
+        if (pointer.active) {
+          pointer.vx = (world.x - pointer.x) * 0.5 + pointer.vx * 0.5
+          pointer.vy = (world.y - pointer.y) * 0.5 + pointer.vy * 0.5
+        }
+        pointer.x = world.x
+        pointer.y = world.y
+        pointer.active = true
+      }
+      const onPointerDown = (event) => {
+        pointer.down = true
+        onPointerMove(event)
+      }
+      const onPointerUp = () => {
+        pointer.down = false
+        pointer.vx = 0
+        pointer.vy = 0
+      }
+      const onPointerLeave = () => {
+        pointer.active = false
+        pointer.down = false
+      }
+
+      window.addEventListener('pointermove', onPointerMove, { passive: true })
+      window.addEventListener('pointerdown', onPointerDown, { passive: true })
+      window.addEventListener('pointerup', onPointerUp, { passive: true })
+      window.addEventListener('pointercancel', onPointerUp, { passive: true })
+      document.addEventListener('pointerleave', onPointerLeave)
+
       const resize = () => {
         const col = document.querySelector('[class*="_centerCol"]') || document.querySelector('[class*="_frame"]')
         const rect = col ? col.getBoundingClientRect() : null
@@ -686,6 +729,8 @@ window.__ModuleLoader__.load({
               edge: dim / 8,
               sx: Math.sin(theta) * Math.cos(phi) * rad,
               sy: Math.sin(theta) * Math.sin(phi) * rad,
+              vx: 0,
+              vy: 0,
             })
           }
         }
@@ -709,6 +754,33 @@ window.__ModuleLoader__.load({
           x += Math.cos(t * 0.9 - p.x * 0.55) * 0.05 * tail
           x = p.sx + (x - p.sx) * assembly
           y = p.sy + (y - p.sy) * assembly
+          /* pointer physics: hover pushes outward, press+drag drags the cloud
+             along with the cursor; the displacement is springy and always
+             returns to the silhouette once the pointer leaves -------------- */
+          if (pointer.active && assembly > 0.6) {
+            const dxp = x - pointer.x
+            const dyp = y - pointer.y
+            const d = Math.sqrt(dxp * dxp + dyp * dyp)
+            const radius = 1.55
+            if (d < radius && d > 1e-4) {
+              const t = 1 - d / radius
+              const falloff = t * t * t
+              const angle = Math.sin(i * 0.37 + t * 0.9) * 0.9
+              const ca = Math.cos(angle)
+              const sa = Math.sin(angle)
+              const ux = (dxp / d) * ca - (dyp / d) * sa
+              const uy = (dxp / d) * sa + (dyp / d) * ca
+              const push = pointer.down ? -1.5 : 1.9
+              p.vx += ux * falloff * push * 0.55 + pointer.vx * falloff * (pointer.down ? 0.9 : 0)
+              p.vy += uy * falloff * push * 0.55 + pointer.vy * falloff * (pointer.down ? 0.9 : 0)
+            }
+          }
+          /* displacement decays on its own, so the cloud always settles back
+             into the silhouette once the pointer leaves ------------------- */
+          p.vx *= 0.86
+          p.vy *= 0.86
+          x += p.vx
+          y += p.vy
           const dist = Math.sqrt(x * x + y * y)
           const glow = smoothstep(8, 0, dist) * 0.22 * assembly
           const shimmer = Math.sin(t * 1.5 + x * 5 + y * 3) * 0.1 + 0.9
@@ -760,6 +832,11 @@ window.__ModuleLoader__.load({
           disposed = true
           cancelAnimationFrame(raf)
           window.clearTimeout(timer)
+          window.removeEventListener('pointermove', onPointerMove)
+          window.removeEventListener('pointerdown', onPointerDown)
+          window.removeEventListener('pointerup', onPointerUp)
+          window.removeEventListener('pointercancel', onPointerUp)
+          document.removeEventListener('pointerleave', onPointerLeave)
           holder.remove()
         },
       }
@@ -971,22 +1048,19 @@ html[${ATTR}] [${SETTINGS_ATTR}]{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:18px;
-  padding:16px 18px;
-  border-radius:14px;
-  border:1.5px dashed var(--dtg-line);
+  gap:14px;
+  padding:12px 14px;
+  border-radius:10px;
+  border:1px solid var(--dtg-line-soft);
   background:var(--dtg-card-bg);
   transition:border-color .16s ease, box-shadow .16s ease, background-color .16s ease;
 }
 .dtg-master-on{
-  border-style:solid;
-  border-color:var(--dsw-alias-brand-primary, #4d6bfe);
-  box-shadow:0 0 0 3px rgba(109, 130, 255, .14), inset 0 1px 0 rgba(255,255,255,.05);
+  border-color:var(--dtg-line);
 }
 .dtg-master-title{
-  font-size:14.5px;
-  font-weight:600;
-  letter-spacing:.01em;
+  font-size:13px;
+  font-weight:500;
 }
 .dtg-master-text{
   display:flex;
@@ -998,76 +1072,48 @@ html[${ATTR}] [${SETTINGS_ATTR}]{
   color:var(--dsw-alias-label-tertiary, var(--dtg-ink));
   opacity:.72;
 }
-/* the power control: a framed capsule with a state word + a big switch, so the
-   boundary of the control is unmistakable even on a translucent panel ------- */
-.dtg-power{
-  display:flex;
+/* one obvious capsule button per row — nothing else frames it -------------- */
+.dtg-pill{
+  display:inline-flex;
   align-items:center;
-  gap:10px;
+  gap:8px;
   flex:0 0 auto;
-  padding:5px 8px 5px 12px;
-  border-radius:999px;
-  border:1.5px solid var(--dtg-line);
-  background:rgba(255,255,255,.05);
-  cursor:pointer;
-  transition:border-color .16s ease, background-color .16s ease;
-}
-.dtg-power:hover{
-  border-color:var(--dtg-ink);
-  background:rgba(255,255,255,.09);
-}
-.dtg-power-on{
-  border-color:var(--dsw-alias-brand-primary, #4d6bfe);
-  background:rgba(109,130,255,.14);
-}
-.dtg-power-state{
-  font-size:12px;
-  font-weight:600;
-  letter-spacing:.08em;
-  color:var(--dtg-ink);
-  opacity:.85;
-  min-width:16px;
-  text-align:center;
-}
-.dtg-power-on .dtg-power-state{
-  color:var(--dsw-alias-brand-primary, #8ea2ff);
-  opacity:1;
-}
-.dtg-switch{
-  position:relative;
-  flex:0 0 auto;
-  width:46px;
-  height:26px;
-  padding:0;
+  height:28px;
+  padding:0 12px 0 10px;
   border-radius:999px;
   border:1px solid var(--dtg-line);
-  background:var(--dtg-line-soft);
-  transition:background-color .16s ease, border-color .16s ease;
+  background:rgba(255,255,255,.04);
+  color:var(--dtg-ink);
+  font-size:12px;
+  font-weight:500;
+  cursor:pointer;
+  transition:background-color .16s ease, border-color .16s ease, color .16s ease;
 }
-.dtg-switch.dtg-on{
-  background:var(--dsw-alias-brand-primary, #4d6bfe);
-  border-color:transparent;
+.dtg-pill:hover{
+  border-color:var(--dtg-ink);
+  background:rgba(255,255,255,.08);
 }
-.dtg-knob{
-  position:absolute;
-  top:2px;
-  left:2px;
-  width:20px;
-  height:20px;
+.dtg-pill-on{
+  border-color:var(--dsw-alias-brand-primary, #4d6bfe);
+  background:rgba(109,130,255,.18);
+  color:var(--dsw-alias-brand-primary, #dbe2ff);
+}
+.dtg-pill-dot{
+  width:8px;
+  height:8px;
   border-radius:50%;
-  background:#fff;
-  box-shadow:0 1px 3px rgba(0,0,0,.28);
-  transition:transform .16s ease;
+  background:currentColor;
+  opacity:.35;
 }
-.dtg-switch.dtg-on .dtg-knob{
-  transform:translateX(20px);
+.dtg-pill-on .dtg-pill-dot{
+  opacity:1;
+  box-shadow:0 0 6px currentColor;
 }
 .dtg-toggle-row{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:16px;
-  padding:6px 2px;
+  gap:14px;
 }
 .dtg-toggle-text{
   display:flex;
@@ -1115,11 +1161,11 @@ html[${ATTR}] [${SETTINGS_ATTR}]{
 }
 .dtg-group{
   border:1px solid var(--dtg-line-soft);
-  border-radius:12px;
-  padding:14px 16px;
+  border-radius:10px;
+  padding:12px 14px;
   display:flex;
   flex-direction:column;
-  gap:16px;
+  gap:14px;
   background-color:var(--dtg-card-bg);
 }
 .dtg-field{
@@ -1233,18 +1279,21 @@ html[${ATTR}] [${SETTINGS_ATTR}]{
       )
     )
 
+    /* one capsule per toggle: the state word is inside the button itself, so a
+       single visible boundary is enough to read as a control ------------------ */
     function Switch(props) {
       return h(
         'button',
         {
           type: 'button',
           role: 'switch',
-          'aria-checked': props.checked,
+          'aria-checked': props.checked ? 'true' : 'false',
           'aria-label': props.label,
-          className: 'dtg-switch' + (props.checked ? ' dtg-on' : ''),
+          className: 'dtg-pill' + (props.checked ? ' dtg-pill-on' : ''),
           onClick: () => props.onChange(!props.checked),
         },
-        h('span', { className: 'dtg-knob' })
+        h('span', { className: 'dtg-pill-dot' }),
+        h('span', null, props.checked ? L('已开启', 'On') : L('已关闭', 'Off'))
       )
     }
 
@@ -1317,7 +1366,7 @@ html[${ATTR}] [${SETTINGS_ATTR}]{
             h(
               'div',
               { className: 'dtg-title' },
-              L('透明磨砂主题', 'Transparent Frosted Theme'),
+              L('透明磨砂主题', 'DSH-Transparent-Frosted'),
               h('span', { className: 'dtg-ver' }, 'v' + VERSION)
             ),
             h(
@@ -1359,19 +1408,11 @@ html[${ATTR}] [${SETTINGS_ATTR}]{
               )
             )
           ),
-          h(
-            'button',
-            {
-              type: 'button',
-              className: 'dtg-power' + (on ? ' dtg-power-on' : ''),
-              role: 'switch',
-              'aria-checked': on ? 'true' : 'false',
-              title: L('点击切换主题开关', 'Click to toggle the theme'),
-              onClick: () => patch({ enabled: !on }),
-            },
-            h('span', { className: 'dtg-power-state' }, on ? L('开', 'ON') : L('关', 'OFF')),
-            h('span', { className: 'dtg-switch' + (on ? ' dtg-on' : '') }, h('span', { className: 'dtg-knob' }))
-          )
+          h(Switch, {
+            label: L('启动透明磨砂主题', 'Start the frosted-glass theme'),
+            checked: on,
+            onChange: (v) => patch({ enabled: v }),
+          })
         ),
         h(
           'div',
@@ -1579,7 +1620,7 @@ html[${ATTR}] [${SETTINGS_ATTR}]{
               name: 'settings.section',
               id: 'transparent-glass',
               order: 100,
-              label: () => L('透明磨砂主题', 'Transparent Frosted Theme'),
+              label: () => L('透明磨砂主题', 'DSH-Transparent-Frosted'),
             },
             GlassSection
           )

@@ -27,7 +27,7 @@ window.__ModuleLoader__.load({
     const IN_DESKTOP = navigator.userAgent.indexOf('Electron') >= 0
     const PANEL_ATTR = 'data-dtg-page'
     const SETTINGS_ATTR = 'data-dtg-settings'
-    const VERSION = '1.0.0'
+    const VERSION = '1.0.1'
     const STORE_KEY = 'dsh-transparent-frosted-theme:settings:v1'
     const LEGACY_KEYS = [
       /* settings written by the earlier "transparent glass" builds */
@@ -43,6 +43,7 @@ window.__ModuleLoader__.load({
       enabled: true,
       page: 72,
       settings: 62,
+      particles: true,
     }
     const ZH = /^zh/i.test((navigator.language || '').toLowerCase())
     const L = (zh, en) => (ZH ? zh : en)
@@ -530,6 +531,17 @@ window.__ModuleLoader__.load({
       set('--dtg-blur-settings', Math.round((9 + 27 * frosty(s.settings)) * 10) / 10 + 'px')
 
       schedulePanels()
+      syncWhale(s.enabled && s.particles !== false)
+    }
+
+    let whale = null
+
+    function syncWhale(on) {
+      if (on && !whale) whale = mountWhale()
+      else if (!on && whale) {
+        whale.dispose()
+        whale = null
+      }
     }
 
     function refresh() {
@@ -548,6 +560,210 @@ window.__ModuleLoader__.load({
       '[class*="_dialog"]', '[class*="_modal"]', '[class*="_tooltip"]',
       '[role="menu"]', '[role="dialog"]', '[role="listbox"]', '[role="tooltip"]',
     ].join(', ')
+
+    /* ------------------------------------------------------------------ */
+    /* whale particles (optional decoration, ported from the MIT-licensed   */
+    /* DSH-Transparent-UI-Plugin: the 24×18 brand fish sampled onto a 60×60 */
+    /* grid, assembled as additive particles)                              */
+    /* ------------------------------------------------------------------ */
+
+    const WHALE_SVG =
+      '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 18" fill="none">' +
+      '<path d="M22.9168 1.43018C22.6713 1.31018 22.5658 1.53918 22.4223 1.65519C22.3733 1.69269 22.3318 1.74169 22.2903 1.78669C21.9317 2.1697 21.5127 2.42121 20.9657 2.39121C20.1657 2.34621 19.4827 2.59771 18.8787 3.20973C18.7502 2.45521 18.3236 2.0047 17.6746 1.71569C17.3351 1.56568 16.9916 1.41518 16.7536 1.08867C16.5876 0.856163 16.5421 0.597155 16.4591 0.341647C16.4061 0.187643 16.3536 0.0301382 16.1761 0.00363739C15.9836 -0.0263635 15.9081 0.135141 15.8326 0.270145C15.5306 0.822162 15.4136 1.43018 15.4251 2.0462C15.4516 3.43174 16.0366 4.53527 17.1991 5.3203C17.3311 5.4103 17.3651 5.5003 17.3236 5.63181C17.2441 5.90231 17.1501 6.16482 17.0671 6.43533C17.0141 6.60784 16.9351 6.64584 16.7501 6.57033C16.1121 6.30383 15.5611 5.90931 15.074 5.4328C14.2475 4.63328 13.5 3.75075 12.568 3.05973C12.349 2.89822 12.13 2.74822 11.9034 2.60522C10.9524 1.68169 12.028 0.923165 12.277 0.833162C12.5375 0.739159 12.3675 0.41615 11.5259 0.42015C10.6844 0.42365 9.91439 0.705658 8.93286 1.08117C8.78935 1.13767 8.63835 1.17867 8.48384 1.21267C7.59332 1.04367 6.66829 1.00617 5.70226 1.11517C3.88321 1.31768 2.43016 2.1777 1.36213 3.64575C0.0790928 5.4103 -0.222916 7.41536 0.146595 9.50642C0.535106 11.7105 1.66014 13.535 3.38869 14.9616C5.18125 16.4406 7.24581 17.1657 9.60138 17.0266C11.0319 16.9441 12.6245 16.7526 14.421 15.2321C14.874 15.4576 15.3496 15.5476 16.1381 15.6151C16.7456 15.6716 17.3306 15.5851 17.7836 15.4911C18.4931 15.3411 18.4441 14.6841 18.1876 14.5636C16.1081 13.595 16.5646 13.9891 16.1496 13.67C17.2061 12.42 18.8202 10.1979 19.3182 7.17235C19.3672 6.83834 19.4297 6.36783 19.4222 6.09732C19.4182 5.93231 19.4562 5.86831 19.6447 5.84931C20.1657 5.78931 20.6712 5.64681 21.1357 5.3913C22.4833 4.65528 23.0268 3.44624 23.1548 1.9972C23.1738 1.77569 23.1508 1.54668 22.9168 1.43018ZM11.1749 14.4736C9.15936 12.889 8.18184 12.3675 7.77832 12.39C7.40081 12.4125 7.46881 12.8445 7.55182 13.126C7.63882 13.404 7.75182 13.5955 7.91033 13.8396C8.01983 14.0011 8.09533 14.2411 7.80083 14.4216C7.15181 14.8231 6.02327 14.2866 5.97027 14.2601C4.65673 13.4865 3.5587 12.4655 2.78467 11.069C2.03715 9.72493 1.60314 8.28289 1.53164 6.74384C1.51264 6.37233 1.62214 6.24082 1.99215 6.17332C2.47916 6.08332 2.98118 6.06432 3.46769 6.13582C5.52476 6.43633 7.27581 7.35586 8.74385 8.8129C9.58188 9.64243 10.2159 10.634 10.8689 11.6025C11.5634 12.631 12.3105 13.611 13.262 14.4146C13.598 14.6961 13.866 14.9101 14.1225 15.0681C13.349 15.1546 12.058 15.1731 11.1749 14.4746V14.4736ZM12.141 8.25988C12.141 8.09488 12.273 7.96338 12.439 7.96338C12.4765 7.96338 12.5105 7.97088 12.541 7.98188C12.5825 7.99688 12.6205 8.01938 12.6505 8.05338C12.7035 8.10588 12.7335 8.18088 12.7335 8.25988C12.7335 8.42489 12.6015 8.55639 12.4355 8.55639C12.2695 8.55639 12.141 8.42489 12.141 8.25988ZM15.1415 9.79893C14.949 9.87793 14.7565 9.94544 14.5715 9.95294C14.2845 9.96794 13.9715 9.85143 13.8015 9.70893C13.5375 9.48742 13.3485 9.36342 13.2695 8.97691C13.2355 8.8119 13.2545 8.55639 13.2845 8.40989C13.3525 8.09438 13.277 7.89187 13.0545 7.70787C12.8735 7.55786 12.643 7.51636 12.39 7.51636C12.2955 7.51636 12.209 7.47486 12.1445 7.44136C12.039 7.38886 11.9519 7.25735 12.035 7.09585C12.0615 7.04335 12.19 6.91584 12.22 6.89334C12.5635 6.69784 12.9595 6.76184 13.326 6.90834C13.6655 7.04735 13.9225 7.30236 14.292 7.66287C14.6695 8.09838 14.7375 8.21838 14.9525 8.54539C15.1225 8.8009 15.277 9.06341 15.3831 9.36392C15.4471 9.55142 15.3641 9.70493 15.1415 9.79893Z" fill="#FFFFFF"/></svg>'
+
+    const WHALE_GRID = 60
+    const WHALE_UNIT = 0.18
+    const WHALE_FPS = 30
+    const WORLD_H = 2 * 18 * Math.tan((50 * Math.PI) / 360)
+
+    const smoothstep = (a, b, t) => {
+      const x = Math.min(1, Math.max(0, (t - a) / (b - a)))
+      return x * x * (3 - 2 * x)
+    }
+
+    /* cheap per-particle noise in [-0.5, 0.5] */
+    const hashNoise = (n) => {
+      const s = Math.sin(n * 12.9898) * 43758.5453
+      return s - Math.floor(s) - 0.5
+    }
+
+    /* mount the decorative particle layer; returns a disposer */
+    function mountWhale() {
+      const holder = document.createElement('div')
+      holder.id = 'dtg-whale'
+      const canvas = document.createElement('canvas')
+      holder.appendChild(canvas)
+      document.body.appendChild(holder)
+
+      const ctx = canvas.getContext('2d')
+      if (!ctx) {
+        holder.remove()
+        return { dispose: () => {} }
+      }
+
+      const reduced =
+        typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches
+      const particles = []
+      let raf = 0
+      let timer = 0
+      let disposed = false
+      let startedAt = performance.now()
+      let dpr = 1
+      let scale = 1
+      let width = 0
+      let height = 0
+
+      const resize = () => {
+        const col = document.querySelector('[class*="_centerCol"]') || document.querySelector('[class*="_frame"]')
+        const rect = col ? col.getBoundingClientRect() : null
+        const ok = rect && rect.width > 0
+        const box = ok ? rect : { left: 0, top: 0, width: innerWidth, height: innerHeight }
+        const size = Math.round(
+          Math.max(200, Math.min(480, innerHeight * 0.58, box.width * 0.72))
+        )
+        const left = Math.round(box.left + box.width / 2 - size / 2)
+        const top = Math.round(box.top + box.height / 2 - size / 2 - box.height * 0.1)
+        if (width !== size) {
+          holder.style.width = size + 'px'
+          holder.style.height = size + 'px'
+          width = size
+          height = size
+          dpr = Math.min(devicePixelRatio || 1, 1.5)
+          canvas.width = Math.round(size * dpr)
+          canvas.height = Math.round(size * dpr)
+          scale = size / WORLD_H
+        }
+        holder.style.left = left + 'px'
+        holder.style.top = top + 'px'
+      }
+
+      const sample = (img) => {
+        const off = document.createElement('canvas')
+        off.width = WHALE_GRID
+        off.height = WHALE_GRID
+        const octx = off.getContext('2d')
+        if (!octx) return
+        octx.fillStyle = '#000'
+        octx.fillRect(0, 0, WHALE_GRID, WHALE_GRID)
+        const fit = Math.min(WHALE_GRID / img.width, WHALE_GRID / img.height)
+        const w = img.width * fit
+        const h = img.height * fit
+        octx.drawImage(img, (WHALE_GRID - w) / 2, (WHALE_GRID - h) / 2, w, h)
+        const data = octx.getImageData(0, 0, WHALE_GRID, WHALE_GRID).data
+        const n = WHALE_GRID
+        const lum = new Float32Array(n * n)
+        for (let i = 0; i < n * n; i++) {
+          lum[i] = (0.299 * data[4 * i] + 0.587 * data[4 * i + 1] + 0.114 * data[4 * i + 2]) / 255
+        }
+        const bright = (x, y) => x >= 0 && y >= 0 && x < n && y < n && lum[y * n + x] > 0.2
+        const hasNeighbour = (x, y) => {
+          for (let dy = -2; dy <= 2; dy++) {
+            for (let dx = -2; dx <= 2; dx++) {
+              if (!dx && !dy) continue
+              if (bright(x + dx, y + dy)) return true
+            }
+          }
+          return false
+        }
+        for (let y = 0; y < n; y++) {
+          for (let x = 0; x < n; x++) {
+            const a = lum[y * n + x]
+            if (a <= 0.2 || !hasNeighbour(x, y)) continue
+            let dim = 0
+            for (let dy = -1; dy <= 1; dy++) {
+              for (let dx = -1; dx <= 1; dx++) {
+                if (!dx && !dy) continue
+                if (!bright(x + dx, y + dy)) dim++
+              }
+            }
+            const phi = Math.random() * Math.PI * 2
+            const theta = Math.acos(2 * Math.random() - 1)
+            const rad = 3 * (0.4 + 0.6 * Math.random())
+            particles.push({
+              x: (x - n / 2) * WHALE_UNIT,
+              y: (n / 2 - y) * WHALE_UNIT,
+              opacity: a,
+              edge: dim / 8,
+              sx: Math.sin(theta) * Math.cos(phi) * rad,
+              sy: Math.sin(theta) * Math.sin(phi) * rad,
+            })
+          }
+        }
+      }
+
+      const draw = (assembly, t) => {
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+        ctx.clearRect(0, 0, width, height)
+        ctx.globalCompositeOperation = 'lighter'
+        const size = Math.max(1, 0.048 * scale * dpr)
+        const breathe = 0.15 * Math.sin(0.4 * t)
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i]
+          const loose = (0.25 + 0.75 * p.edge) * assembly
+          let x = p.x + hashNoise(i) * 0.05 * loose
+          let y = p.y + hashNoise(i * 1.37 + 7) * 0.05 * loose
+          x += Math.sin(t * 0.5 + i * 0.53) * 0.06 * loose
+          y += Math.cos(t * 0.42 + i * 0.71) * 0.06 * loose
+          const tail = smoothstep(0.5, 4.5, p.x) * assembly
+          y += Math.sin(t * 1.1 - p.x * 0.7) * 0.1 * tail
+          x += Math.cos(t * 0.9 - p.x * 0.55) * 0.05 * tail
+          x = p.sx + (x - p.sx) * assembly
+          y = p.sy + (y - p.sy) * assembly
+          const dist = Math.sqrt(x * x + y * y)
+          const glow = smoothstep(8, 0, dist) * 0.22 * assembly
+          const shimmer = Math.sin(t * 1.5 + x * 5 + y * 3) * 0.1 + 0.9
+          const alpha = p.opacity * (0.3 + 0.2 * assembly + glow) * shimmer
+          if (alpha <= 0.004) continue
+          const sx = width / 2 + x * scale - size / 2
+          const sy = height / 2 - (y + breathe) * scale - size / 2
+          ctx.fillStyle = 'rgba(206, 218, 242, ' + alpha.toFixed(3) + ')'
+          ctx.fillRect(sx, sy, size, size)
+        }
+        ctx.globalCompositeOperation = 'source-over'
+      }
+
+      const start = () => {
+        if (disposed) return
+        let last = performance.now()
+        const step = (now) => {
+          if (disposed) return
+          raf = requestAnimationFrame(step)
+          if (now - last < 1000 / WHALE_FPS) return
+          last = now
+          const elapsed = (now - startedAt) / 1000
+          const raw = Math.min(1, Math.max(0, (elapsed - 0.3) / 2.5))
+          draw(smoothstep(0, 1, 1 - Math.pow(1 - raw, 3)), elapsed)
+        }
+        raf = requestAnimationFrame(step)
+      }
+
+      resize()
+      const img = new Image()
+      img.onload = () => {
+        if (disposed) return
+        sample(img)
+        resize()
+        if (reduced) draw(1, 2)
+        else start()
+        /* the conversation column can mount after the plugin */
+        timer = window.setTimeout(() => {
+          if (!disposed) {
+            resize()
+            if (reduced) draw(1, 2)
+          }
+        }, 700)
+      }
+      img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(WHALE_SVG)
+
+      return {
+        dispose: () => {
+          disposed = true
+          cancelAnimationFrame(raf)
+          window.clearTimeout(timer)
+          holder.remove()
+        },
+      }
+    }
 
     const CSS = `
 /* the shell paints nothing: what shows through is the window itself, i.e.
@@ -584,6 +800,20 @@ html[${ATTR}] body::before{
   background-color:var(--dtg-page-fill);
   backdrop-filter:blur(var(--dtg-blur-page)) saturate(150%) brightness(1.04);
   -webkit-backdrop-filter:blur(var(--dtg-blur-page)) saturate(150%) brightness(1.04);
+}
+/* decorative particle whale: a negative-z body child, so it paints above the
+   sheet and below every piece of app content ----------------------------- */
+html[${ATTR}] #dtg-whale{
+  position:fixed;
+  z-index:-1;
+  pointer-events:none;
+  mix-blend-mode:screen;
+  opacity:.92;
+}
+html[${ATTR}] #dtg-whale canvas{
+  display:block;
+  width:100%;
+  height:100%;
 }
 
 /* no second page paint anywhere in the shell --------------------------- */
@@ -831,6 +1061,24 @@ html[${ATTR}] [${SETTINGS_ATTR}]{
 }
 .dtg-switch.dtg-on .dtg-knob{
   transform:translateX(20px);
+}
+.dtg-toggle-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:6px 2px;
+}
+.dtg-toggle-text{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  min-width:0;
+}
+.dtg-toggle-note{
+  font-size:11.5px;
+  color:var(--dtg-ink-dim);
+  opacity:.8;
 }
 .dtg-hint{
   color:var(--dsw-alias-brand-primary, var(--dtg-ink));
@@ -1147,6 +1395,32 @@ html[${ATTR}] [${SETTINGS_ATTR}]{
         ),
         h(
           'div',
+          { className: 'dtg-group' + (on ? '' : ' dtg-off') },
+          h(
+            'div',
+            { className: 'dtg-toggle-row' },
+            h(
+              'div',
+              { className: 'dtg-toggle-text' },
+              h('span', { className: 'dtg-label' }, L('粒子效果', 'Particle effect')),
+              h(
+                'span',
+                { className: 'dtg-toggle-note' },
+                L(
+                  '对话区中央的鲸鱼粒子，随主题一起淡入淡出',
+                  'A whale made of particles in the conversation area, fading with the theme'
+                )
+              )
+            ),
+            h(Switch, {
+              label: L('粒子效果', 'Particle effect'),
+              checked: s.particles !== false,
+              onChange: (v) => patch({ particles: v }),
+            })
+          )
+        ),
+        h(
+          'div',
           { className: 'dtg-actions' },
           h(
             'button',
@@ -1250,6 +1524,10 @@ html[${ATTR}] [${SETTINGS_ATTR}]{
       }
 
       return () => {
+        try {
+          if (whale) whale.dispose()
+        } catch (err) {}
+        whale = null
         try {
           delete window.__dtgTheme
         } catch (err) {}

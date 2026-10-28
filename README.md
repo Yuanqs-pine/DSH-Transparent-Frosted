@@ -1,7 +1,7 @@
 # DSH-Transparent-frosted · 透明磨砂主题
 
 <p>
-  <img alt="version" src="https://img.shields.io/badge/version-1.0.0-6c8cff">
+  <img alt="version" src="https://img.shields.io/badge/version-1.0.1-6c8cff">
   <img alt="platform" src="https://img.shields.io/badge/dsh-web%20%7C%20windows%20%7C%20macos-14b8a6">
   <img alt="scope" src="https://img.shields.io/badge/scope-background%20layer%20only-8e8e93">
   <img alt="license" src="https://img.shields.io/badge/license-MIT-3ddc84">
@@ -119,6 +119,12 @@ DSH-Transparent-frosted/
 ```
 
 ---
+
+## 粒子效果 · Particle whale
+
+设置页里的 **粒子效果** 开关控制对话区中央那条由粒子组成的鲸鱼。它由 2D canvas 逐帧绘制，只出现在主内容列的中心，不拦截鼠标，也不影响任何布局；关闭开关后画布与定时器会被完全移除（`prefers-reduced-motion` 下只绘制一帧静态图）。
+
+> 该粒子的实现思路与 SVG 路径来自 [WYH66666666/DSH-Transparent-UI-Plugin](https://github.com/WYH66666666/DSH-Transparent-UI-Plugin)（MIT）。本项目只移植了粒子效果本身，未引入该项目的其它 UI 改动或依赖。
 
 ## 卸载 · Uninstall
 

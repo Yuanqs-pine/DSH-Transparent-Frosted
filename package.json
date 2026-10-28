@@ -1,6 +1,6 @@
 {
   "name": "@local/dsh-transparent-frosted",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "type": "module",
   "description": "Transparent frosted theme for dsh: one slider moves the whole app between a really blurred, frosted background and a fully transparent one; the settings page has its own independent slider. Background layer only. Works on dsh web, Windows and macOS.",

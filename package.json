@@ -17,7 +17,8 @@
     "locale",
     "README.md",
     "LICENSE",
-    "docs"
+    "docs",
+    "screenshots.json"
   ],
   "dsh": {
     "bundle": {

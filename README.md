@@ -26,23 +26,32 @@ A transparent frosted-glass background for DeepSeek Harness. One slider moves th
 
 **桌面端**
 
+1. 下载或 `git clone` 本仓库到本地；
+2. **设置 → 插件 → 安装本地插件**，选中该目录（会自动登记 bundle 并启用）；
+3. **完全退出并重新启动** DeepSeek Harness —— 前端代码只在窗口创建时加载，热刷新无效。
+
+命令行等价做法（两步都要）：
+
 ```bash
 git clone https://github.com/Yuanqs-pine/DSH-Transparent-Frosted.git
 dsh plugin --profile desktop add link:E:/path/to/DSH-Transparent-Frosted
 ```
 
-在 **设置 → 插件** 里启用，然后**完全退出并重新启动** DeepSeek Harness（前端代码只在窗口创建时加载，热刷新无效）。
+再把 `dsh-transparent-frosted` 加进 `~/.dsh/profiles/desktop/package.json` 的 `dsh.profile.bundles` 数组。
 
 **Web 端**
+
+1. 同上安装，但 profile 换成 `web`；
+2. 启动并打开浏览器：
 
 ```bash
 dsh plugin --profile web add link:E:/path/to/DSH-Transparent-Frosted
 dsh --profile web web --port 8080
 ```
 
-浏览器打开 `http://127.0.0.1:8080`，在 **设置 → 插件** 启用后刷新页面。Web 端没有桌面壁纸，插件会自绘一层深色渐变作为磨砂底。
+3. 浏览器打开 `http://127.0.0.1:8080`，在 **设置 → 插件** 启用后刷新页面。
 
-> 不想用命令行：在 **设置 → 插件** 里用「安装本地插件」，选中本目录，效果相同。
+Web 端没有桌面壁纸，插件会自绘一层深色渐变作为磨砂底。
 
 ## 使用
 

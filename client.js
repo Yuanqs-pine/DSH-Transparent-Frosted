@@ -293,6 +293,10 @@ window.__ModuleLoader__.load({
       if (!state.settings.enabled) {
         untagPanels()
         root.removeAttribute(SHELL_ATTR)
+        /* the whales are decoration for the theme: switching the theme off
+           must take them down too, otherwise they keep animating in the
+           empty area below the page */
+        syncWhale(false)
         return
       }
       const vw = window.innerWidth || 0
@@ -476,6 +480,10 @@ window.__ModuleLoader__.load({
         ROOT_VARS.forEach((name) => root.style.removeProperty(name))
         untagPanels()
         root.removeAttribute(SHELL_ATTR)
+        /* the whales are decoration for the theme: switching the theme off
+           must take them down too, otherwise they keep animating in the
+           empty area below the page */
+        syncWhale(false)
         return
       }
 
@@ -1455,7 +1463,7 @@ html[${ATTR}] [${SETTINGS_ATTR}]{
             ),
             h(Switch, {
               label: L('粒子效果', 'Particle effect'),
-              checked: s.particles !== false,
+              checked: on && s.particles !== false,
               onChange: (v) => patch({ particles: v }),
             })
           )

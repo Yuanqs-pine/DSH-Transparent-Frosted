@@ -47,11 +47,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/<your-account>/DSH-Transparent-Frosted.git"
+    "url": "git+https://github.com/Yuanqs-pine/DSH-Transparent-Frosted.git"
   },
-  "homepage": "https://github.com/<your-account>/DSH-Transparent-Frosted#readme",
+  "homepage": "https://github.com/Yuanqs-pine/DSH-Transparent-Frosted#readme",
   "bugs": {
-    "url": "https://github.com/<your-account>/DSH-Transparent-Frosted/issues"
+    "url": "https://github.com/Yuanqs-pine/DSH-Transparent-Frosted/issues"
   },
   "publishConfig": {
     "access": "public"

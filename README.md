@@ -61,7 +61,7 @@ A transparent frosted-glass background for DeepSeek Harness. One slider takes th
 ### ② dsh CLI，从 GitHub 安装
 
 ```bash
-dsh plugin --profile desktop add github:<your-account>/DSH-Transparent-Frosted
+dsh plugin --profile desktop add github:Yuanqs-pine/DSH-Transparent-Frosted
 ```
 
 ### ③ dsh CLI，从 npm 安装
@@ -73,7 +73,7 @@ dsh plugin --profile desktop add dsh-transparent-frosted
 ### ④ 本地目录（开发调试）
 
 ```bash
-git clone https://github.com/<your-account>/DSH-Transparent-Frosted.git
+git clone https://github.com/Yuanqs-pine/DSH-Transparent-Frosted.git
 dsh plugin --profile desktop add link:/absolute/path/to/DSH-Transparent-Frosted
 ```
 
@@ -101,7 +101,7 @@ npm publish --access public     # 版本号取自 package.json
 ```
 
 `package.json` 里已准备好 `files`、`license`、`keywords`、`repository`、`homepage`、`bugs`、`publishConfig.access`；
-发布前把 `repository` / `homepage` / `bugs` 里的 `<your-account>` 换成你的 GitHub 用户名。
+发布前把 `repository` / `homepage` / `bugs` 里的 `Yuanqs-pine` 换成你的 GitHub 用户名。
 
 发布后用户即可 `dsh plugin add dsh-transparent-frosted`，或直接 `npm i dsh-transparent-frosted` 查看包内容。
 

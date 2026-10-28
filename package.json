@@ -1,0 +1,44 @@
+{
+  "name": "@local/dsh-transparent-frosted",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Transparent frosted theme for dsh: one slider moves the whole app between a really blurred, frosted background and a fully transparent one; the settings page has its own independent slider. Background layer only. Works on dsh web, Windows and macOS.",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "docs/*",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-layout",
+        "@deepseek-ai/dsh-client-ui-theme"
+      ]
+    }
+  },
+  "license": "MIT",
+  "keywords": [
+    "dsh-plugin",
+    "theme",
+    "glassmorphism",
+    "frosted-glass",
+    "transparency"
+  ]
+}

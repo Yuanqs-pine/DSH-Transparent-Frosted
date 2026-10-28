@@ -22,36 +22,26 @@ A transparent frosted-glass background for DeepSeek Harness. One slider moves th
 
 ## 安装
 
-只支持 **本地目录** 安装，不走 npm、不走插件市场。
+下载 [Releases](https://github.com/Yuanqs-pine/DSH-Transparent-Frosted/releases) 里的 `dsh-transparent-frosted-1.0.1.tgz`，放在任意目录，然后：
 
 **桌面端**
 
-1. 下载或 `git clone` 本仓库到本地；
-2. **设置 → 插件 → 安装本地插件**，选中该目录（会自动登记 bundle 并启用）；
-3. **完全退出并重新启动** DeepSeek Harness —— 前端代码只在窗口创建时加载，热刷新无效。
-
-命令行等价做法（两步都要）：
-
 ```bash
-git clone https://github.com/Yuanqs-pine/DSH-Transparent-Frosted.git
-dsh plugin --profile desktop add link:E:/path/to/DSH-Transparent-Frosted
+dsh plugin --profile desktop add ./dsh-transparent-frosted-1.0.1.tgz
 ```
 
-再把 `dsh-transparent-frosted` 加进 `~/.dsh/profiles/desktop/package.json` 的 `dsh.profile.bundles` 数组。
+装完**完全退出并重新启动** DeepSeek Harness（前端代码只在窗口创建时加载，热刷新无效）。
 
 **Web 端**
 
-1. 同上安装，但 profile 换成 `web`；
-2. 启动并打开浏览器：
-
 ```bash
-dsh plugin --profile web add link:E:/path/to/DSH-Transparent-Frosted
+dsh plugin --profile web add ./dsh-transparent-frosted-1.0.1.tgz
 dsh --profile web web --port 8080
 ```
 
-3. 浏览器打开 `http://127.0.0.1:8080`，在 **设置 → 插件** 启用后刷新页面。
+浏览器打开 `http://127.0.0.1:8080` 即可。Web 端没有桌面壁纸，插件会自绘一层深色渐变作为磨砂底。
 
-Web 端没有桌面壁纸，插件会自绘一层深色渐变作为磨砂底。
+> 也可以直接指向克隆下来的源码目录：把上面的 `./dsh-transparent-frosted-1.0.1.tgz` 换成 `link:E:/path/to/DSH-Transparent-Frosted`。
 
 ## 使用
 

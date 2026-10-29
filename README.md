@@ -12,9 +12,11 @@
 A transparent frosted-glass background for DeepSeek Harness. One slider moves the whole app between a genuinely blurred frost and a fully cleared background — every region, control and expanded page moves as **a single sheet**. The settings page keeps its own slider.
 
 > 深色主题下效果最佳 —— 你的电脑桌面壁纸就是 DeepSeek Harness 的背景皮肤。
-> Best on a dark theme: your desktop wallpaper becomes the background skin.
+> **桌面端效果更好**：只有桌面端能把整个窗口背景让出去、直接透出你的桌面壁纸；Web 端只能露出插件自绘的背景。
+>
+> Best on a dark theme: your desktop wallpaper becomes the background skin. The **desktop app** is the better place to use it — only there can the window become truly transparent.
 
-| 浓磨砂 | 全透明 |
+| 浓磨砂（0%） | 全透明（100%） |
 |---|---|
 | ![frost](docs/frost.jpg) | ![clear](docs/clear.jpg) |
 
@@ -30,7 +32,9 @@ A transparent frosted-glass background for DeepSeek Harness. One slider moves th
 dsh plugin --profile desktop add ./dsh-transparent-frosted-1.0.2.tgz
 ```
 
-装完**完全退出并重新启动** DeepSeek Harness（前端代码只在窗口创建时加载，热刷新无效）。
+装完**刷新窗口**即可生效：按 `Ctrl+R`（macOS 为 `Cmd+R`）重新加载页面，插件会立刻套用默认配置（已开启、页面 72%、设置页 62%），不需要先打开设置页。
+
+插件是前端代码，只能在页面加载时注入，所以"安装后完全不刷新就出现"是做不到的；但只要刷新窗口就行，不必退出整个进程。若刷新后界面没有变化，再完全退出并重新启动一次即可。
 
 **Web 端**
 
@@ -39,7 +43,9 @@ dsh plugin --profile web add ./dsh-transparent-frosted-1.0.2.tgz
 dsh --profile web web --port 8080
 ```
 
-浏览器打开 `http://127.0.0.1:8080` 即可。Web 端没有桌面壁纸，插件会自绘一层深色渐变作为磨砂底。
+浏览器打开 `http://127.0.0.1:8080` 即可，同样刷新页面就会生效。
+
+> Web 端没有"桌面壁纸"可以透出来：浏览器窗口背后是浏览器自己，插件只能自绘一层深色渐变当作背景底。所以 Web 端拉到全透明，透出的是这层渐变，而不是你的桌面 —— **想要"背景就是你的壁纸"的效果，请用桌面端。**
 
 > 也可以直接指向克隆下来的源码目录：把上面的 `./dsh-transparent-frosted-1.0.2.tgz` 换成 `link:E:/path/to/DSH-Transparent-Frosted`。
 
@@ -56,6 +62,22 @@ dsh --profile web web --port 8080
 | 恢复默认 | 回到 页面 72% / 设置页 62% |
 
 粒子支持鼠标交互：悬停推开、按住拖动带走、松开后自然回落到鲸鱼轮廓。
+
+## 两端效果对照
+
+桌面端：窗口本身就是透明的，整页玻璃透出的是**你的桌面壁纸**。
+
+| 桌面端 · 浓磨砂 0% | 桌面端 · 全透明 100% |
+|---|---|
+| ![desktop frost](docs/desktop-frost.jpg) | ![desktop clear](docs/desktop-clear.jpg) |
+
+Web 端：窗口背后没有壁纸，插件自绘深色渐变作为底，看上去是彩色玻璃而不是"透出桌面"。
+
+| Web 端 · 浓磨砂 0% | Web 端 · 全透明 100% |
+|---|---|
+| ![web frost](docs/web-frost.jpg) | ![web clear](docs/web-clear.jpg) |
+
+**结论：桌面端效果更好**——只有桌面端的"全透明"是真的把应用背景让给了你的壁纸；Web 端在同样设置下只能露出插件自己画的那层渐变。
 
 ## 兼容
 

@@ -1,7 +1,7 @@
 # DSH-Transparent-Frosted · 透明磨砂主题
 
 <p>
-  <img alt="version" src="https://img.shields.io/badge/version-1.0.1-6c8cff">
+  <img alt="version" src="https://img.shields.io/badge/version-1.0.2-6c8cff">
   <img alt="platform" src="https://img.shields.io/badge/dsh-desktop%20%7C%20web-14b8a6">
   <img alt="scope" src="https://img.shields.io/badge/scope-background%20layer%20only-8e8e93">
   <img alt="license" src="https://img.shields.io/badge/license-MIT-3ddc84">
@@ -22,12 +22,12 @@ A transparent frosted-glass background for DeepSeek Harness. One slider moves th
 
 ## 安装
 
-下载 [Releases](https://github.com/Yuanqs-pine/DSH-Transparent-Frosted/releases) 里的 `dsh-transparent-frosted-1.0.1.tgz`，放在任意目录，然后：
+下载 [Releases](https://github.com/Yuanqs-pine/DSH-Transparent-Frosted/releases) 里的 `dsh-transparent-frosted-1.0.2.tgz`，放在任意目录，然后：
 
 **桌面端**
 
 ```bash
-dsh plugin --profile desktop add ./dsh-transparent-frosted-1.0.1.tgz
+dsh plugin --profile desktop add ./dsh-transparent-frosted-1.0.2.tgz
 ```
 
 装完**完全退出并重新启动** DeepSeek Harness（前端代码只在窗口创建时加载，热刷新无效）。
@@ -35,13 +35,13 @@ dsh plugin --profile desktop add ./dsh-transparent-frosted-1.0.1.tgz
 **Web 端**
 
 ```bash
-dsh plugin --profile web add ./dsh-transparent-frosted-1.0.1.tgz
+dsh plugin --profile web add ./dsh-transparent-frosted-1.0.2.tgz
 dsh --profile web web --port 8080
 ```
 
 浏览器打开 `http://127.0.0.1:8080` 即可。Web 端没有桌面壁纸，插件会自绘一层深色渐变作为磨砂底。
 
-> 也可以直接指向克隆下来的源码目录：把上面的 `./dsh-transparent-frosted-1.0.1.tgz` 换成 `link:E:/path/to/DSH-Transparent-Frosted`。
+> 也可以直接指向克隆下来的源码目录：把上面的 `./dsh-transparent-frosted-1.0.2.tgz` 换成 `link:E:/path/to/DSH-Transparent-Frosted`。
 
 ## 使用
 
@@ -79,6 +79,7 @@ dsh --profile web web --port 8080
 | 版本 | 内容 |
 |---|---|
 | **v1.0.0** | 基线：单层页面磨砂 + 设置页独立滑杆、总开关、线稿图标、桌面端 / Web 双平台适配 |
+| **v1.0.2** | 修复「跟随系统」：系统外观是深色时，从浅色切到跟随系统后设置页与页面底色仍停在浅色配色（现在监听 dsh 的 `data-ds-theme-source` 与 `data-ds-dark-theme`，重新取色并刷新） |
 | **v1.0.1** | 鲸鱼粒子（可关闭，带悬停推开 / 拖拽带走的指针物理）；开关改为单胶囊样式、行距对齐设置页；关闭总开关时自动卸载粒子图层 |
 
 回退基线：`git checkout v1.0.0`

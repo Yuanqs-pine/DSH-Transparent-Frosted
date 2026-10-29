@@ -27,7 +27,7 @@ window.__ModuleLoader__.load({
     const IN_DESKTOP = navigator.userAgent.indexOf('Electron') >= 0
     const PANEL_ATTR = 'data-dtg-page'
     const SETTINGS_ATTR = 'data-dtg-settings'
-    const VERSION = '1.0.1'
+    const VERSION = '1.0.2'
     const STORE_KEY = 'dsh-transparent-frosted-theme:settings:v1'
     const LEGACY_KEYS = [
       /* settings written by the earlier "transparent glass" builds */
@@ -1543,11 +1543,30 @@ html[${ATTR}] [${SETTINGS_ATTR}]{
             } catch (err) {}
           }, 150)
         }
+        /* dsh resolves the appearance into two markers:
+           `html[data-ds-theme-source]` = light | dark | system (the user's pick)
+           and `body[data-ds-dark-theme]` = the *resolved* answer (present = dark).
+           Watching only `data-theme` missed the "follow the system" branch, which
+           keeps the resolved scheme but changes only the source — the sheet then
+           stayed on the previous palette. Watch both markers, plus the legacy
+           class/data-theme hooks other builds use. */
         state.observer = new MutationObserver(onMutate)
         state.observer.observe(document.documentElement, {
           attributes: true,
-          attributeFilter: ['class', 'data-theme', 'data-ui-theme'],
+          attributeFilter: [
+            'class',
+            'data-theme',
+            'data-ui-theme',
+            'data-ds-theme-source',
+            'data-ds-dark-theme',
+          ],
         })
+        if (document.body) {
+          state.observer.observe(document.body, {
+            attributes: true,
+            attributeFilter: ['class', 'data-theme', 'data-ds-dark-theme', 'data-ds-theme-source'],
+          })
+        }
 
         state.panelObserver = new MutationObserver((records) => {
           if (state.settings.enabled) {

@@ -1,6 +1,6 @@
 {
   "name": "dsh-transparent-frosted",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "description": "Transparent frosted-glass background for DeepSeek Harness (dsh) — one slider from real frosted glass to a fully cleared background, a separate settings-page slider, and an optional particle whale. Works on dsh web, Windows and macOS.",
   "exports": {

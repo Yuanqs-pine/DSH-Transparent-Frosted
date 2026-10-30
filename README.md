@@ -117,10 +117,6 @@ DSH-Transparent-Frosted/
     └── particles.png      鲸鱼粒子
 ```
 
-## License
-
-[MIT](./LICENSE) © [Yuanqs-pine](https://github.com/Yuanqs-pine)
-
 ## 免责声明
 
 **一、仅供学习交流。**
@@ -140,3 +136,7 @@ DSH-Transparent-Frosted/
 
 **六、权利主张。**
 若权利人认为本项目侵犯了其合法权益，请联系作者，作者将在核实后立即移除相关内容。
+
+## License
+
+[MIT](./LICENSE) © [Yuanqs-pine](https://github.com/Yuanqs-pine)
